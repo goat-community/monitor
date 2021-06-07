@@ -24,7 +24,7 @@
     5. Modify configurations file for configmaps:
 
         5.1
-        monitoring/prometheus file contains configurations for prometheus instance that will collect metrics from external prometheus and alertmanager ( in cluster #1) using federation feature
+        kube-configmaps/prometheus.yml file contains configurations for prometheus instance that will collect metrics from external prometheus and alertmanager ( in cluster #1) using federation feature
 
         <ip> should be replaced with real external IP from step #3.
             ---
@@ -54,7 +54,7 @@
                 - targets:
                 - "<ip>:9093"
 
-        monitoring/alertmanager.yml file contains configurations for alertmanager. To enable e-mail notification you need to modify this value and replace values with real data for smtp configuration. Or you can leave as it is and test only monitoring part.
+        kubec-configmaps/alertmanager.yml file contains configurations for alertmanager. To enable e-mail notification you need to modify this value and replace values with real data for smtp configuration. Or you can leave as it is and test only monitoring part.
 
     6. Create custom configmaps. Even if alermanagert config files wasn’t modified create configmap from this file too:
 
@@ -72,7 +72,7 @@
 
             kubectl apply -f kube-infrastructure/crunchy-operator-monitoring-external.yml
 
-    That’s all. You can access prometheus or grafana dashboard setting port-forwarding for this services or changing from `ClusterIP` to `LoadBalancer` value in `grafana_service_type` or `prometheus_service_type` in monitoring/crunchy-operator-monitoring-external.yml 
+    That’s all. You can access prometheus or grafana dashboard setting port-forwarding for this services or changing from `ClusterIP` to `LoadBalancer` value in `grafana_service_type` or `prometheus_service_type` in kube-infrastructure/crunchy-operator-monitoring-external.yml 
 
 
 
