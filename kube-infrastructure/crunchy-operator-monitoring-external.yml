@@ -90,7 +90,7 @@ data:
     # More info for these options can be found in the docs
     # https://access.crunchydata.com/documentation/postgres-operator/latest/installation/metrics/metrics-configuration/
     # =====================
-    alertmanager_custom_config: "alertmanager-config"
+    alertmanager_custom_config: "crunchy-alertmanager"
     alertmanager_custom_rules_config: ""
     alertmanager_install: "true"
     alertmanager_log_level: "info"
@@ -107,12 +107,12 @@ data:
     disable_fsgroup: "false"
     grafana_admin_password: "admin"
     grafana_admin_username: "admin"
-    grafana_dashboards_custom_config: ""
-    grafana_datasources_custom_config: ""
+    grafana_dashboards_custom_config: "crunchy-grafana-dashboards"
+    grafana_datasources_custom_config: "crunchy-grafana-datasources"
     grafana_install: "true"
     grafana_port: "3000"
     grafana_service_name: "crunchy-grafana"
-    grafana_service_type: "CLusterIP"
+    grafana_service_type: "ClusterIP"
     grafana_storage_access_mode: "ReadWriteOnce"
     grafana_storage_class_name: ""
     grafana_supplemental_groups: ""
@@ -165,7 +165,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: pgo-metrics-deploy
-          image: crunchydata/pgo-deployer:centos7-4.5.1
+          image: fufelok/pgo-deployer:centos7-4.5.1
           imagePullPolicy: IfNotPresent
           env:
             - name: DEPLOY_ACTION

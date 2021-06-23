@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: grafana
+  namespace: pgo
+spec:
+  rules:
+  - host: grafana.open-accessibility.org
+    http:
+      paths:
+      - backend:
+          serviceName: crunchy-grafana
+          servicePort: 3000
+        path: /
+  tls:
+  - secretName: letsencrypt-prod
+    hosts:
+    - grafana.open-accessibility.org

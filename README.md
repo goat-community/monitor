@@ -56,11 +56,17 @@
 
         kubec-configmaps/alertmanager.yml file contains configurations for alertmanager. To enable e-mail notification you need to modify this value and replace values with real data for smtp configuration. Or you can leave as it is and test only monitoring part.
 
-    6. Create custom configmaps. Even if alermanagert config files wasn’t modified create configmap from this file too:
+    6. Create custom configmaps for prometheus and alertmanager. Even if alermanagert config files wasn’t modified create configmap from this file too:
 
             kubectl create configmap crunchy-prometheus -n pgo --from-file=kube-configmaps/prometheus.yml
                 
-            kubectl create configmap alertmanager-config -n pgo --from-file=kube-configmaps/alertmanager.yml
+            kubectl create configmap crunchy-alertmanager -n pgo --from-file=kube-configmaps/alertmanager.yml
+
+    6. Create custom configmaps for Grafana. They will contain Loki datasource and custom dashboard configurations to enable Loki's logs visualization:
+
+            kubectl apply -f kube-configmaps/crunchy_grafana_dashboards.yml
+
+            kubectl create configmap crunchy-grafana-datasources -n pgo --from-file=kube-configmaps/crunchy_grafana_datasources.yml
     
     7. Create monitoring stack in cluster #2
 
@@ -73,6 +79,53 @@
             kubectl apply -f kube-infrastructure/crunchy-operator-monitoring-external.yml
 
     That’s all. You can access prometheus or grafana dashboard setting port-forwarding for this services or changing from `ClusterIP` to `LoadBalancer` value in `grafana_service_type` or `prometheus_service_type` in kube-infrastructure/crunchy-operator-monitoring-external.yml 
+
+* Logging
+    To collect logs from pods in entire cluster was used Grafana Loki. It allows us to collect logs from each cluster inside of entire k8 cluster. Then Loki can be used as datasource in Grafana or any other supported visualizing tool.
+    To install Loki use the following command:
+
+        helm upgrade --install loki --namespace=pgo grafana/loki-stack
+
+    It will deploy Loki stack ( Loki itself and promtail) inside of pgo namespace.
+    To access Loki from external cluster and to secure logs there is loki/loki-ingress.yaml file. You can use it to create ingress and establish basic auth.
+    First of all you need to create secret with credentials for basic auth:
+
+        htpasswd -c auth <username>
+    Then create secret from this file:
+
+        kubectl create secret generic basic-auth -n pgo --from-file=auth 
+
+    loki/loki-ingress.yaml already contains configurations for basic auth, so just create it:
+
+        kubectl apply -f loki/loki-ingress.yaml
+
+    Remember that Loki must be deployed inside of cluster from which you want to collect logs.
+
+* SSL configuration
+
+    Apply letscrypt.yaml file from goat repository into monitoring cluster.
+
+    To enable SSL for grafana ingress first of all wee need to create nginx-ingress configuration:
+
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.47.0/deploy/static/provider/do/deploy.yaml
+
+    Wait for installation.
+
+    DO managed k8 cluster have strange issue when pods inside of cluster cannot communicate with each other through Ingress service, and this cause problem with creating and verifying ssl certificates so we need to modify this service and add annotation:
+
+        kubectl edit svc -n ingress-nginx ingress-nginx-controller
+
+    Then add this annotation:
+
+        service.beta.kubernetes.io/do-loadbalancer-hostname: "workaround.example.com"
+
+    Where `workaround.example.com` is domain name that assigned to nginx-ingress loadbalancer public IP.
+
+    After this you can create ingress for grafana service with https enabled:
+
+        kubectl apply -f kube-infrastructure/grafana-ingress.yaml
+
+
 
 
 
