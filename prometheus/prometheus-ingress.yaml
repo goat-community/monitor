@@ -8,15 +8,15 @@ metadata:
     nginx.ingress.kubernetes.io/auth-secret: basic-auth
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required - foo'
   name: prometheus
-  namespace: pgo
+  namespace: monitoring
 spec:
   rules:
   - host: prometheus.open-accessibility.org
     http:
       paths:
       - backend:
-          serviceName: crunchy-prometheus
-          servicePort: 9090
+          serviceName: prometheus-server
+          servicePort: 80
         path: /
   tls:
   - secretName: letsencrypt-prod

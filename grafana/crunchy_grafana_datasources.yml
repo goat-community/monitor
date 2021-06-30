@@ -1,0 +1,42 @@
+# config file version
+apiVersion: 1
+
+# list of datasources to insert/update depending
+# what's available in the database
+datasources:
+- name: PROMETHEUS
+  type: prometheus
+  access: proxy
+  orgId: 1
+  url: http://prometheus.open-accessibility.org
+  password:
+  user:
+  database:
+  basicAuth: true
+  basicAuthUser: exampleuser
+  secureJsonData:
+    basicAuthPassword: examplepassword
+  withCredentials:
+  isDefault: true
+  version: 1
+  editable: true
+
+- name: Prometheus-Loki
+  type: prometheus
+  access: proxy
+  url: http://pgo.open-accessibility.org/loki/
+  editable: true
+  basicAuth: true
+  basicAuthUser: exampleuser
+  secureJsonData:
+    basicAuthPassword: examplepassword
+
+- name: Loki
+  type: loki
+  access: proxy
+  url: http://pgo.open-accessibility.org
+  editable: true
+  basicAuth: true
+  basicAuthUser: exampleuser
+  secureJsonData:
+    basicAuthPassword: examplepassword
