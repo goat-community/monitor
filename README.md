@@ -6,7 +6,7 @@
 
     There will be created sidecar container with meterics exporter
 
-    2. Run the follomind command:
+    2. Run the following command:
 
             kubectl create namespace monitoring
             helm install prometheus prometheus-community/prometheus --namespace monitoring --values prometheus/values.yaml 
@@ -17,7 +17,7 @@
 
             kubectl apply -f grafana/crunchy_grafana_dashboards.yml
 
-            kubectl create configmap crunchy-grafana-datasources -n pgo --from-file=grafana/crunchy_grafana_datasources.yml
+            kubectl create configmap crunchy-grafana-datasources -n pgo --from-file=kube-configmaps/crunchy_grafana_datasources.yml
 
 
     4. Create monitoring stack in cluster #2
